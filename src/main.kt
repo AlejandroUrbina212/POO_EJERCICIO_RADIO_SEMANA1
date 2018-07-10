@@ -1,5 +1,6 @@
 package main
 
+
 import main.radio.Radio
 
 
@@ -22,22 +23,22 @@ fun main(args: Array<String>) {
         """.trimMargin())
         println("Ingrese su selección: ")
         // variables generales
-        var frecuencia: Int = 0
+        var frecuencia = 0
         // hasta acá
         val strseleccion: String? = readLine()
-        var seleccion: Int = 0
-        var OkSeleccion: Boolean = false
+        var seleccion = 0
+        var okSeleccion = false
         if (strseleccion != null) {
             try {
                 seleccion = strseleccion.toInt()
-                OkSeleccion = true
+                okSeleccion = true
 
             } catch (error: NumberFormatException) {
                 println("ERROR: Por favor ingrese un número")
-                OkSeleccion = false
+                okSeleccion = false
             }
         }
-        if (OkSeleccion){
+        if (okSeleccion){
             seleccion = strseleccion!!.toInt()
         }
 
@@ -46,12 +47,10 @@ fun main(args: Array<String>) {
                 Radio.turnOn()
                 println("usted ha encendido el Radio")
             }
-            else{
-                println("El radio ya está Encendido")
-            }
+            else println("El radio ya está Encendido")
         }
         else if (seleccion==2){
-            var OkFrecuencia: Boolean = false
+            var okFrecuencia = false
             println("Seleccione el número de opción de frecuencia que desea sintonizar")
             println("1. AM")
             println("2. FM")
@@ -60,14 +59,14 @@ fun main(args: Array<String>) {
             if (strfrecuencia != null) {
                 try {
                     frecuencia = strfrecuencia.toInt()
-                    OkFrecuencia = true
+                    okFrecuencia = true
 
                 } catch (error: NumberFormatException) {
                     println("ERROR: Por favor ingrese un número")
-                    OkFrecuencia= false
+                    okFrecuencia= false
                 }
             }
-            if (OkFrecuencia && 0<frecuencia && frecuencia<3){
+            if (okFrecuencia && 0<frecuencia && frecuencia<3){
                 frecuencia = strfrecuencia!!.toInt()
                 when (frecuencia){
                     1-> Radio.RangeToAM()
@@ -77,39 +76,101 @@ fun main(args: Array<String>) {
 
         }
         else if (seleccion==3){
-            val frec_actual = Radio.frecuencia
-            if (frec_actual=="AM"){
-                println("xdD")
-            }
-            else if (frec_actual=="FM"){
-                // TERMINAR DE PONER CONDICIONALES PARA EVITAR QUE EL USUARIO SIGA INGRESANDO SIN BAJAR
-                var end: Int =0
-                while (end==0) {
-                    println("Ingrese el signo ´+´ o ´-´ para subir o bajar de estación")
-                    val strUpOrDown: String? = readLine()
-                    if ((Radio.Station + 10) <= 1600 && strUpOrDown == "+") {
-                        Radio.ChangeStation(frec_actual, 0.0, "+")
+            val frecActual = Radio.frecuencia
+            var paso = 0.0
+            var okPaso = false
+            if (frecActual=="AM") {
+                println("Ingrese el signo ´+´ o ´-´ para subir o bajar de estación")
+                val strUpOrDown: String? = readLine()
+                println("Ingrese el tamaño de salto entre estaciones que quiere dar (en decimales)")
+                val strpaso: String? = readLine()
 
-                    }
-                    else if ((Radio.Station - 10) >= 540 && strUpOrDown == "-") {
-                        Radio.ChangeStation(frec_actual, 0.0, "-")
+                if (strpaso != null) {
+                    try {
+                        paso = strpaso.toDouble()
+                        okPaso = true
 
-                    }
-                    println("Desea subir o bajar más? (s/n)")
-                    val keepChangingStation: String? = readLine()
-                        //val KeepChangingStation: String? = readLine()
-                    end = if (keepChangingStation == "s") {
-                        0
-                    } else {
-                        1
+                    } catch (error: NumberFormatException) {
+                        println("ERROR: Por favor ingrese un número en decimales")
+                        okPaso = false
                     }
 
                 }
+                if (okPaso) {
+                    if (strUpOrDown == "+") {
+                        if ((Radio.Station + paso) <= 108.1) {
 
+                            Radio.ChangeStation(frecActual, paso, "+")
+                            println("La estación actual es: ${Radio.Station}")
+                        } else {
+                            println("La Frecuencia FM tiene una banda de alcance máximo de 1600")
+                        }
+                    } else if (strUpOrDown == "-") {
+                        if ((Radio.Station - paso) >= 88.1) {
+                            Radio.ChangeStation(frecActual, paso, "-")
+                            println("La estación actual es: ${Radio.Station}")
+                        } else {
+                            println("La Frecuencia FM tiene una banda de alcance mínimo de 540")
+                        }
+                    }
+                }
+            }
+            else if (frecActual=="FM"){
+
+                println("Ingrese el signo ´+´ o ´-´ para subir o bajar de estación")
+                val strUpOrDown: String? = readLine()
+                if (strUpOrDown == "+") {
+                    if ((Radio.Station + 10) <= 1600){
+
+                        Radio.ChangeStation(frecActual, 0.0, "+")
+                        println("La estación actual es: ${Radio.Station}")
+                    }
+                    else{
+                        println("La Frecuencia FM tiene una banda de alcance máximo de 1600")
+                    }
+                }
+                else if (strUpOrDown == "-") {
+                    if ((Radio.Station - 10) >= 540){
+                        Radio.ChangeStation(frecActual, 0.0, "-")
+                        println("La estación actual es: ${Radio.Station}")
+                    }
+                    else{
+                        println("La Frecuencia FM tiene una banda de alcance mínimo de 540")
+                    }
+                }
+            }
+
+
+        }
+        else if (seleccion==4){
+            println("El volúmen actual del Radio es: ${Radio.Volume}")
+            println("Ingrese el signo ´+´ o ´-´ para subir o bajar el volúmen")
+            val strvolumen: String? = readLine()
+            if (strvolumen != null) {
+                if (strvolumen=="+"){
+                    Radio.ChangeVolume("+")
+                    println("El volúmen actual del Radio es: ${Radio.Volume}")
 
                 }
-
+                else if (strvolumen=="-"){
+                    Radio.ChangeVolume("-")
+                    println("El volúmen actual del Radio es: ${Radio.Volume}")
+                }
             }
+
+
+        }
+        else if (seleccion==5){
+            if (Radio.isTurnedOn){
+                println("Radio Apagado")
+                Radio.isTurnedOn=false
+            }
+            else{
+                println("El radio ya está apagado")
+            }
+        }
+
+
 
 
 
@@ -121,13 +182,4 @@ fun main(args: Array<String>) {
 
 
     }
-
-
-
-
-
-//    println("Encendiendo radio")
-  //  Radio.turnOn()
-    //println(Radio)
-//println(Radio.Volume)
 
