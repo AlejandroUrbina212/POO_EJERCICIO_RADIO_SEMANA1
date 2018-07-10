@@ -1,3 +1,7 @@
+//Luis Alejandro Urbina Hernández
+//Carné: 18473
+//Carrera: CCTI
+
 package main
 
 
@@ -9,7 +13,7 @@ val Radio = Radio(
 )
 
 fun main(args: Array<String>) {
-    do {
+    do { //Se muestra el menú mientras el usuario no escoja 6 (salir)
         println("""Bienvenido, El estado actual del radio es:
             $Radio
             Por Favor seleccione una opción:
@@ -24,11 +28,12 @@ fun main(args: Array<String>) {
         println("Ingrese su selección: ")
         // variables generales
         var frecuencia = 0
-        // hasta acá
+
         val strseleccion: String? = readLine()
         var seleccion = 0
         var okSeleccion = false
-        if (strseleccion != null) {
+        // hasta acá
+        if (strseleccion != null) {   //validación de la selección como un dato válido u como un número
             try {
                 seleccion = strseleccion.toInt()
                 okSeleccion = true
@@ -43,13 +48,13 @@ fun main(args: Array<String>) {
         }
 
         if (seleccion==1){
-            if (!Radio.isTurnedOn){
-                Radio.turnOn()
-                println("usted ha encendido el Radio")
+            if (!Radio.isTurnedOn){ // Si el usuario escoge 1
+                Radio.turnOn() //se verifica el estado del radio y en caso de que ya esté encendido se notifica, de lo
+                println("usted ha encendido el Radio") //contrario, el radio se enciende
             }
             else println("El radio ya está Encendido")
         }
-        else if (seleccion==2){
+        else if (seleccion==2){ // cambio se estación a AM o Fm dependiendo de la opcion que escoja
             var okFrecuencia = false
             println("Seleccione el número de opción de frecuencia que desea sintonizar")
             println("1. AM")
@@ -79,9 +84,9 @@ fun main(args: Array<String>) {
             val frecActual = Radio.frecuencia
             var paso = 0.0
             var okPaso = false
-            if (frecActual=="AM") {
-                println("Ingrese el signo ´+´ o ´-´ para subir o bajar de estación")
-                val strUpOrDown: String? = readLine()
+            if (frecActual=="AM") {  //si se encuentra en el ranfo AM se verifica que no se pueda bajar más
+                println("Ingrese el signo ´+´ o ´-´ para subir o bajar de estación") //allá de 87.0 nu subir a más
+                val strUpOrDown: String? = readLine() //de 108.1
                 println("Ingrese el tamaño de salto entre estaciones que quiere dar (en decimales)")
                 val strpaso: String? = readLine()
 
@@ -142,25 +147,33 @@ fun main(args: Array<String>) {
 
 
         }
-        else if (seleccion==4){
+        else if (seleccion==4){ //se valida la opción de subir o bajar volúmen y que se encuentre en el rango de 0-100
             println("El volúmen actual del Radio es: ${Radio.Volume}")
             println("Ingrese el signo ´+´ o ´-´ para subir o bajar el volúmen")
             val strvolumen: String? = readLine()
             if (strvolumen != null) {
                 if (strvolumen=="+"){
-                    Radio.ChangeVolume("+")
-                    println("El volúmen actual del Radio es: ${Radio.Volume}")
+                    if (Radio.Volume==100) {
+                        Radio.ChangeVolume("+")
+                        println("El volúmen actual del Radio es: ${Radio.Volume}")
+                    }else{
+                        println("VOLUMEN MÁXIMO")
+                    }
 
                 }
                 else if (strvolumen=="-"){
-                    Radio.ChangeVolume("-")
-                    println("El volúmen actual del Radio es: ${Radio.Volume}")
+                    if (Radio.Volume==0) {
+                        Radio.ChangeVolume("-")
+                        println("El volúmen actual del Radio es: ${Radio.Volume}")
+                    }else{
+                    println("VOLUMEN MINIMO")
+                }
                 }
             }
 
 
         }
-        else if (seleccion==5){
+        else if (seleccion==5){ //Apagar Radio, si ya está apagado, noificar al usuario
             if (Radio.isTurnedOn){
                 println("Radio Apagado")
                 Radio.isTurnedOn=false
